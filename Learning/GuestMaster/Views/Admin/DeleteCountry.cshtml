@@ -1,0 +1,22 @@
+﻿@model EventManagementSystem.Models.Countrymodel
+
+@{
+    ViewData["Title"] = "Delete Country";
+}
+
+<h6>Admin->Countries->Delete Country</h6>
+
+<h3>Are you sure you want to delete this country?</h3>
+<div>
+    <h4>@Model.CountryName</h4>
+</div>
+
+<form asp-action="DeleteCountry" >
+    <input type="hidden" asp-for="CountryId" />
+    <div class="form-group">
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="Countries" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+
+

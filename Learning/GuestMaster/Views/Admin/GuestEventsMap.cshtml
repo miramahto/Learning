@@ -1,0 +1,72 @@
+﻿@model EventManagementSystem.Models.Guestmodel
+
+@{
+    ViewData["Title"] = "Guest Events Map";
+}
+<h2>Admin -> Guest(s)->Event(s) Attendance</h2>
+<form asp-action="SaveGuestEventsMap" method="post">
+    <div class="text-center">
+        <br />
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Guests" class="btn btn-secondary">Back</a>
+    </div>
+    <input type="hidden" asp-for="GuestId" />
+    <input type="hidden" asp-for="GuestName" />
+	<input type="hidden" asp-for="CityTownVillageID" />
+	<input type="hidden" asp-for="GuestGender" />
+
+
+    <h4>Guest Details</h4>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Guest Name</th>
+                <th>Guest Gender</th>
+                <th>City/Town/Village</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.GuestName</td>
+                <td>@Model.GuestGender</td>
+                <td>@Model.ListCityTownVillage.FirstOrDefault(ctv => ctv.CityTownVillageID == Model.CityTownVillageID)?.CityTownVillageName</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4>Guest Events Mappings</h4>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Event Date</th>
+                <th>Event Gift Details</th>
+                <th>Is Attended</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.ListEventGuestMappingmodel.Count; i++)
+            {
+                <tr>
+                    <td>@Model.ListEventGuestMappingmodel[i].EventName</td>
+                    <td>@Model.ListEventGuestMappingmodel[i].EventDate</td>
+                    <td>
+                        <input type="hidden" name="ListEventGuestMappingmodel[@i].EventId" value="@Model.ListEventGuestMappingmodel[i].EventId" />
+                        <input type="hidden" name="ListEventGuestMappingmodel[@i].GuestId" value="@Model.GuestId" />
+                        <input type="text" name="ListEventGuestMappingmodel[@i].EventGiftDetails" value="@Model.ListEventGuestMappingmodel[i].EventGiftDetails" class="form-control" />
+                    </td>
+                    <td>
+                        <input type="checkbox" name="ListEventGuestMappingmodel[@i].IsAttended" value="true" @(Model.ListEventGuestMappingmodel[i].IsAttended ? "checked" : "") />
+                        <input type="hidden" name="ListEventGuestMappingmodel[@i].IsAttended" value="false" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="text-center">
+        <br />
+		<button type="submit" class="btn btn-primary">Save</button>
+		<a asp-action="Guests" class="btn btn-secondary">Back</a>
+	</div>
+</form>

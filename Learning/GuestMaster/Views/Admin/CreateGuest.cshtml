@@ -1,0 +1,128 @@
+﻿@model EventManagementSystem.Models.Guestmodel
+
+@{
+    ViewData["Title"] = "Create Guest";
+}
+<h2>Admin -> Guests->Create Guest</h2>
+
+
+<form asp-action="CreateGuest" method="post">
+    <div class="form-group">
+        <label asp-for="GuestName" class="control-label">Guest Name</label>
+        <input asp-for="GuestName" class="form-control" />
+        <span asp-validation-for="GuestName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="GuestGender" class="control-label">Guest Gender</label>
+        <select asp-for="GuestGender" class="form-control">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+        <span asp-validation-for="GuestGender" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CountryId" class="control-label">Country</label>
+        <select asp-for="CountryId" class="form-control" asp-items="ViewBag.Countries" id="countrySelect">
+            <option value="">Select a country</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="StateId" class="control-label">State</label>
+        <select asp-for="StateId" class="form-control" asp-items="ViewBag.States" id="stateSelect">
+            <option value="">Select a state</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="DistrictId" class="control-label">District</label>
+        <select asp-for="DistrictId" class="form-control" asp-items="ViewBag.Districts" id="districtSelect">
+            <option value="">Select a district</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="CityTownVillageID" class="control-label">City/Town/Village</label>
+        <select asp-for="CityTownVillageID" class="form-control" asp-items="ViewBag.CityTownVillages" id="cityTownVillageSelect">
+            <option value="">Select a City/Town/Village</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <br />
+        <input type="submit" value="Create" class="btn btn-primary" />
+        <a asp-action="Guests" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById("countrySelect").addEventListener("change", function () {
+            var countryId = this.value;
+            var stateSelect = document.getElementById("stateSelect");
+            stateSelect.innerHTML = '<option value="">Select a state</option>'; // Clear existing options
+            var districtSelect = document.getElementById("districtSelect");
+            districtSelect.innerHTML = '<option value="">Select a district</option>'; // Clear existing options
+            var cityTownVillageSelect = document.getElementById("cityTownVillageSelect");
+            cityTownVillageSelect.innerHTML = '<option value="">Select a City/Town/Village</option>'; // Clear existing options
+
+            if (countryId) {
+                fetch(`/Admin/GetStatesByCountry?countryId=${countryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(state => {
+                            var option = document.createElement("option");
+                            option.value = state.stateId;
+                            option.text = state.stateName;
+							
+                            stateSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching states:', error));
+            }
+        });
+
+        document.getElementById("stateSelect").addEventListener("change", function () {
+            var stateId = this.value;
+            var districtSelect = document.getElementById("districtSelect");
+            districtSelect.innerHTML = '<option value="">Select a district</option>'; // Clear existing options
+            var cityTownVillageSelect = document.getElementById("cityTownVillageSelect");
+            cityTownVillageSelect.innerHTML = '<option value="">Select a City/Town/Village</option>'; // Clear existing options
+
+            if (stateId) {
+                fetch(`/Admin/GetDistrictsByState?stateId=${stateId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(district => {
+                            var option = document.createElement("option");
+							
+                            option.value = district.districtId;
+                            option.text = district.districtName;
+                            districtSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+            }
+        });
+
+        document.getElementById("districtSelect").addEventListener("change", function () {
+            var districtId = this.value;
+            var cityTownVillageSelect = document.getElementById("cityTownVillageSelect");
+            cityTownVillageSelect.innerHTML = '<option value="">Select a City/Town/Village</option>'; // Clear existing options
+
+            if (districtId) {
+                fetch(`/Admin/GetCityTownVillagesByDistrict?districtId=${districtId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(cityTownVillage => {
+                            var option = document.createElement("option");
+                            option.value = cityTownVillage.cityTownVillageID;
+                            option.text = cityTownVillage.cityTownVillageName;
+                            cityTownVillageSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching City/Town/Villages:', error));
+            }
+        });
+    </script>
+}

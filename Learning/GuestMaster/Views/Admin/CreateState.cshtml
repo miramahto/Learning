@@ -1,0 +1,31 @@
+﻿@model EventManagementSystem.Models.Statemodel
+
+@{
+    ViewData["Title"] = "Create State";
+}
+
+<h6>Admin->States->Create States</h6>
+
+<form asp-action="CreateState" method="post">
+    <div class="form-group">
+        <label asp-for="CountryId" class="control-label">Country</label>
+        <select asp-for="CountryId" class="form-control" asp-items="ViewBag.Countries">
+            <option value="">Select a country</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="StateName" class="control-label">State</label>
+        <input asp-for="StateName" class="form-control" />
+        <span asp-validation-for="StateName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+        <a asp-action="States">Back</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

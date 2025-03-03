@@ -1,0 +1,117 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Utility;
+@{
+    //ViewData["Title"] = "Home Page";
+    var userEmail = HttpContextAccessor.HttpContext.Session.GetString(SessionKeys.UserEmail) ?? "NA";
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString(SessionKeys.UserRole) ?? "NA";
+    var UserAppName = HttpContextAccessor.HttpContext.Session.GetString(SessionKeys.UserAppName) ?? "";
+    var isUserRoleAppMapped = HttpContextAccessor.HttpContext.Session.GetString(SessionKeys.isUserRoleAppMapped) ?? "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @UserAppName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GuestMaster.styles.css" asp-append-version="true" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #343a40;
+        }
+
+        .navbar-brand, .nav-link, .footer {
+            color: #ffffff !important;
+        }
+
+        .footer {
+            background-color: #343a40;
+            padding: 10px 0;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Event(s) and Guest(s) Management System</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                @if ((HttpContextAccessor.HttpContext.Session.GetString("UserEmail") != null) && (HttpContextAccessor.HttpContext.Session.GetString("isUserRoleAppMapped") != "FALSE"))
+                {
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="User" asp-action="Index">View Guest(s) List</a>
+                            </li>
+                            @if (userRole == "admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="text-white me-3">Hi: @userEmail (@userRole)</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @if (isUserRoleAppMapped == "FALSE")
+            {
+                <div class="alert alert-danger" role="alert">
+                    Hi @userEmail<br />
+                    <strong>Warning!</strong> You are not authorized to access this application, Please contact to admin to get the access.
+                </div>
+                <div>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Back</button>
+                    </form>
+                </div>
+            }
+            else if (isUserRoleAppMapped == "TRUE")
+            {
+                <div><b>Welcome to @UserAppName</b></div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer text-muted">
+        <div class="container">
+            &copy; 2025 - <a asp-area="" asp-controller="Home" asp-action="Privacy" target="_blank">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

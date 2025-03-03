@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "CommonApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\GuestMaster\\EventManagementSystem.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

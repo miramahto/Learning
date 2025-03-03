@@ -1,0 +1,36 @@
+﻿@model IEnumerable<EventManagementSystem.Models.EventsMastermodel>
+
+@{
+    ViewData["Title"] = "Events";
+}
+
+<h2>Admin -> Events</h2>
+
+<p>
+    <a asp-action="CreateEvent" class="btn btn-primary">Add New Event</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</p>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Event Name</th>
+            <th>Event Date</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var eventModel in Model)
+        {
+            <tr>
+                <td>@eventModel.EventName</td>
+                <td>@eventModel.EventDate.ToString("yyyy-MM-dd")</td>
+                <td>@eventModel.Location</td>
+                <td>
+                    <a asp-action="EditEvent" asp-route-id="@eventModel.EventId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="DeleteEvent" asp-route-id="@eventModel.EventId" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

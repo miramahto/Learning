@@ -1,0 +1,22 @@
+﻿@model EventManagementSystem.Models.Countrymodel
+@{
+    ViewData["Title"] = "Edit Country";
+}
+
+<h6>Admin->Countries->Edit Country</h6>
+
+<form asp-action="EditCountry" onsubmit="return confirm('Are you sure you want to modify this country?');">
+    <input type="hidden" asp-for="CountryId" />
+    <div class="form-group">
+        <label asp-for="CountryName" class="control-label"></label>
+        <input asp-for="CountryName" class="form-control" />
+        <span asp-validation-for="CountryName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <br />
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Countries" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+
+

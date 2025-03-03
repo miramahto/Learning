@@ -1,0 +1,65 @@
+﻿@model IEnumerable<EventManagementSystem.Models.Statemodel>
+
+@{
+    ViewData["Title"] = "States";
+}
+
+<h6>Admin->States</h6>
+
+<div>
+    <label for="countrySelect">Select Country:</label>
+    <select id="countrySelect" onchange="filterStates()">
+        <option value="">All</option>
+        @foreach (var country in Model.Select(m => m.CountryName).Distinct())
+        {
+            <option value="@country">@country</option>
+        }
+    </select>
+</div>
+<div>
+    <br />
+    <a asp-action="CreateState" class="btn btn-primary">Add New State</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
+    
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>State</th>
+            <th>Country</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="statesTableBody">
+        @foreach (var state in Model)
+        {
+            <tr data-country="@state.CountryName">
+                <td>@state.StateName</td>
+                <td>@state.CountryName
+                    <input type="hidden" name="countryName" value="@state.CountryName" />
+                </td>
+                <td>
+                    <a asp-action="EditState" asp-route-id="@state.StateId" class="btn btn-warning">Edit</a> 
+                    <a asp-action="DeleteState" asp-route-id="@state.StateId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function filterStates() {
+            var selectedCountry = document.getElementById("countrySelect").value;
+            var rows = document.querySelectorAll("#statesTableBody tr");
+            rows.forEach(row => {
+                if (selectedCountry === "" || row.getAttribute("data-country") === selectedCountry) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+}

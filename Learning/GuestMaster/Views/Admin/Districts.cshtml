@@ -1,0 +1,63 @@
+﻿@model IEnumerable<EventManagementSystem.Models.Districtmodel>
+
+@{
+    ViewData["Title"] = "Districts";
+}
+
+<h2>Admin->Districts</h2>
+
+<div>
+    <label for="stateSelect">Select State:</label>
+    <select id="stateSelect" onchange="filterDistricts()">
+        <option value="">All</option>
+        @foreach (var state in Model.Select(m => m.StateName).Distinct())
+        {
+            <option value="@state">@state</option>
+        }
+    </select>
+</div>
+<div>
+    <br />
+    <a asp-action="CreateDistrict" class="btn btn-primary">Add New District</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>
+   
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>District</th>
+            <th>State</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="districtsTableBody">
+        @foreach (var district in Model)
+        {
+            <tr data-state="@district.StateName">
+                <td>@district.DistrictName</td>
+                <td>@district.StateName</td>
+                <td>
+                    <a asp-action="EditDistrict" asp-route-id="@district.DistrictId" class="btn btn-warning">Edit</a> 
+                    <a asp-action="DeleteDistrict" asp-route-id="@district.DistrictId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function filterDistricts() {
+            var selectedState = document.getElementById("stateSelect").value;
+            var rows = document.querySelectorAll("#districtsTableBody tr");
+            rows.forEach(row => {
+                if (selectedState === "" || row.getAttribute("data-state") === selectedState) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+}

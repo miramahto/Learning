@@ -1,0 +1,57 @@
+﻿@model EventManagementSystem.Models.CityTownVillagemodel
+
+@{
+    ViewData["Title"] = "Create City/Town/Village";
+}
+
+<h2>Create City/Town/Village</h2>
+
+<form asp-action="CreateCityTownVillage" method="post">
+  @*   <div class="form-group">
+        <label asp-for="StateId" class="control-label">State</label>
+        <select asp-for="StateId" class="form-control" asp-items="ViewBag.States" id="stateSelect">
+            <option value="">Select a state</option>
+        </select>
+    </div> *@
+    <div class="form-group">
+        <label asp-for="DistrictId" class="control-label">District</label>
+        <select asp-for="DistrictId" class="form-control" asp-items="ViewBag.Districts ?? new SelectList(Enumerable.Empty<SelectListItem>())" id="districtSelect">
+            <option value="">Select a district</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="CityTownVillageName" class="control-label">City/Town/Village</label>
+        <input asp-for="CityTownVillageName" class="form-control" />
+        <span asp-validation-for="CityTownVillageName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById("stateSelect").addEventListener("change", function () {
+            var stateId = this.value;
+            var districtSelect = document.getElementById("districtSelect");
+            districtSelect.innerHTML = '<option value="">Select a district</option>'; // Clear existing options
+
+            if (stateId) {
+                fetch(`/Admin/GetDistrictsByState?stateId=${stateId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(district => {
+                            var option = document.createElement("option");
+                            option.value = district.DistrictId;
+                            option.text = district.DistrictName;
+                            districtSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+            }
+        });
+    </script>
+}

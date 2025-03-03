@@ -1,0 +1,146 @@
+﻿@model IEnumerable<EventManagementSystem.Models.CityTownVillagemodel>
+
+@{
+    ViewData["Title"] = "City/Town/Villages";
+}
+
+<h2 class="text-center my-4">Admin -> City/Town/Villages</h2>
+
+<div class="form-group row mb-3">
+    <label for="stateSelect" class="col-sm-2 col-form-label">Select State:</label>
+    <div class="col-sm-10">
+        <select id="stateSelect" class="form-control" onchange="filterCityTownVillages()">
+            <option value="">All</option>
+            @foreach (var state in Model.Select(m => m.StateName).Distinct())
+            {
+                <option value="@state">@state</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="form-group row mb-3">
+    <label for="districtSelect" class="col-sm-2 col-form-label">Select District:</label>
+    <div class="col-sm-10">
+        <select id="districtSelect" class="form-control" onchange="filterCityTownVillages()">
+            <option value="">All</option>
+            @foreach (var district in Model.Select(m => m.DistrictName).Distinct())
+            {
+                <option value="@district">@district</option>
+            }
+        </select>
+    </div>
+</div>
+
+<p class="text-center">
+    <a asp-action="CreateCityTownVillage" class="btn btn-primary mx-2">Add New City/Town/Village</a>
+    <a asp-action="Index" class="btn btn-secondary mx-2">Back</a>
+    <button type="button" class="btn btn-success mx-2" onclick="exportToCSV()">Export to CSV</button>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>City/Town/Village</th>
+            <th>District</th>
+            <th>State</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="cityTownVillagesTableBody">
+        @foreach (var cityTownVillage in Model)
+        {
+            <tr data-district="@cityTownVillage.DistrictName" data-state="@cityTownVillage.StateName">
+                <td>@cityTownVillage.CityTownVillageName</td>
+                <td>@cityTownVillage.DistrictName</td>
+                <td>@cityTownVillage.StateName</td>
+                <td>
+                    <a asp-action="EditCityTownVillage" asp-route-id="@cityTownVillage.CityTownVillageID" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="DeleteCityTownVillage" asp-route-id="@cityTownVillage.CityTownVillageID" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center">
+    <nav>
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#" onclick="changePage(-1)">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="changePage(1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+@section Scripts {
+    <script>
+        const rowsPerPage = 10;
+        let currentPage = 1;
+
+        function filterCityTownVillages() {
+            var selectedState = document.getElementById("stateSelect").value;
+            var selectedDistrict = document.getElementById("districtSelect").value;
+            var rows = document.querySelectorAll("#cityTownVillagesTableBody tr");
+            rows.forEach(row => {
+                var stateMatch = selectedState === "" || row.getAttribute("data-state") === selectedState;
+                var districtMatch = selectedDistrict === "" || row.getAttribute("data-district") === selectedDistrict;
+                if (stateMatch && districtMatch) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+            paginateRows();
+        }
+
+        function paginateRows() {
+            var rows = document.querySelectorAll("#cityTownVillagesTableBody tr");
+            var visibleRows = Array.from(rows).filter(row => row.style.display !== "none");
+            var totalPages = Math.ceil(visibleRows.length / rowsPerPage);
+
+            visibleRows.forEach((row, index) => {
+                if (index >= (currentPage - 1) * rowsPerPage && index < currentPage * rowsPerPage) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            document.querySelector(".pagination").style.display = totalPages > 1 ? "flex" : "none";
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            paginateRows();
+        }
+
+        function exportToCSV() {
+            var selectedState = document.getElementById("stateSelect").value;
+            var selectedDistrict = document.getElementById("districtSelect").value;
+            var rows = document.querySelectorAll("#cityTownVillagesTableBody tr");
+            var csvContent = "data:text/csv;charset=utf-8,City/Town/Village,District,State\n";
+
+            rows.forEach(row => {
+                var stateMatch = selectedState === "" || row.getAttribute("data-state") === selectedState;
+                var districtMatch = selectedDistrict === "" || row.getAttribute("data-district") === selectedDistrict;
+                if (stateMatch && districtMatch) {
+                    var cells = row.querySelectorAll("td");
+                    var rowContent = Array.from(cells).slice(0, 3).map(cell => cell.textContent).join(",");
+                    csvContent += rowContent + "\n";
+                }
+            });
+
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "city_town_villages.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            paginateRows();
+        });
+    </script>
+}

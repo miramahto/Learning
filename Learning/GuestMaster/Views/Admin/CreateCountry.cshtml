@@ -1,0 +1,21 @@
+﻿@model EventManagementSystem.Models.Countrymodel
+
+@{
+    ViewData["Title"] = "Create Country";
+}
+
+<h6>Admin->Countries->Create Country</h6>
+
+<form asp-action="CreateCountry" onsubmit="return confirm('Are you sure you want to add this country?');">
+    <div class="form-group">
+        <label asp-for="CountryName" class="control-label"></label>
+        <input asp-for="CountryName" class="form-control" />
+        <span asp-validation-for="CountryName" class="text-danger"></span>
+    </div>
+    <br />
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+        <a asp-action="Countries">Back</a>
+    </div>
+</form>
+

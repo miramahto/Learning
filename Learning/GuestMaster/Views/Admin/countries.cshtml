@@ -1,0 +1,34 @@
+﻿@model IEnumerable<EventManagementSystem.Models.Countrymodel>
+
+@{
+    ViewData["Title"] = "Countries";
+}
+
+<h6>Admin->Countries</h6>
+
+<p>
+    <a asp-action="CreateCountry" class="btn btn-primary">Create New Country</a>
+    <a asp-action="Index" class="btn btn-secondary" >Back</a>
+   
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Country Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var country in Model)
+        {
+            <tr>
+                <td>@country.CountryName</td>
+                <td>
+                    <a asp-action="EditCountry" asp-route-id="@country.CountryId" class="btn btn-warning">Edit</a>
+                    <a asp-action="DeleteCountry" asp-route-id="@country.CountryId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
